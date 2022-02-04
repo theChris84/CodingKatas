@@ -9,6 +9,10 @@ Please find further information [Coding Kata ToDictionary](https://ccd-school.de
 ```powershell
 > dotnet tool restore
 ```
+* Restore nuget package references. (Root Folder) 
+```powershell
+> dotnet restore
+```
 * Execute the tests either for C# or F# navigate to the folder and execute. Dotnet test builds and executes the tests in one command.
 ```powershell
 > dotnet test
