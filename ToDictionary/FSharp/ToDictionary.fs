@@ -2,10 +2,10 @@ module StringLibrary
 
 open System
 
-let toDictionary (value: string) =
-    let rec toDict = function 
+let toDictionary (inputText: string) =
+    let rec toDict = function
     | [] -> []
-    | head::tail -> 
+    | head::tail ->
             let sHead : string = head
             match sHead.Split '=' with
             | [|""; _|] -> raise <| new ArgumentException()
@@ -15,5 +15,6 @@ let toDictionary (value: string) =
             | [|a; ""; b|] -> (a, $"={b}")::toDict(tail)
             | _ -> []
 
-    let i = value.Split(';', StringSplitOptions.RemoveEmptyEntries) |> List.ofArray
-    toDict i 
+    inputText.Split(';', StringSplitOptions.RemoveEmptyEntries)
+    |> List.ofArray
+    |> toDict
