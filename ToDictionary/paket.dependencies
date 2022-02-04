@@ -1,0 +1,9 @@
+framework:net6.0
+storage: none
+source https://api.nuget.org/v3/index.json
+
+nuget FSharp.Core
+nuget coverlet.collector
+nuget Microsoft.NET.Test.Sdk
+nuget xunit
+nuget xunit.runner.visualstudio
