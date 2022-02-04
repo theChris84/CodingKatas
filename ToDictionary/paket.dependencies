@@ -4,6 +4,8 @@ source https://api.nuget.org/v3/index.json
 
 nuget FSharp.Core
 nuget coverlet.collector
+nuget FsUnit
+nuget FsUnit.xUnit
 nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.visualstudio

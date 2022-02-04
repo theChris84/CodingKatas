@@ -2,6 +2,7 @@ module ToDicitionaryShould
 
 open System
 open Xunit
+open FsUnit.Xunit
 open StringLibrary
 
 let inputDataSet: seq<array<Object>> =
@@ -13,7 +14,7 @@ let inputDataSet: seq<array<Object>> =
         yield [|
             "a=1;b=2"
             [("a", "1"); ("b", "2")]
-        |] 
+        |]
         yield [|
             "a=1;;b=2"
             [("a", "1"); ("b", "2")]
@@ -28,23 +29,15 @@ let inputDataSet: seq<array<Object>> =
         |]
     }
 
-
 [<Theory>]
 [<MemberData(nameof(inputDataSet))>]
 let ``Intput can split by semicolon and equal symbol`` (input, expected) =
-    //arrange, act
-    let result = toDictionary input
-    //assert
-    Assert.Equal<List<string*string>>(expected, result)
+    toDictionary input |> should equal expected
 
 [<Fact>]
 let ``Return empty list on empty input`` () =
-    //arrange, act
-    let result = toDictionary ""
-    //assert
-    Assert.Equal<List<string*string>>([], result)
+    toDictionary "" |> should be Empty
 
 [<Fact>]
 let ``Received exception on invalid input`` () =
-    //arrange, act, assert
-    Assert.Throws<ArgumentException>( fun _ ->  toDictionary "=1" |> ignore )
+    (fun () -> toDictionary "=1" |> ignore) |> should throw typeof<ArgumentException>
