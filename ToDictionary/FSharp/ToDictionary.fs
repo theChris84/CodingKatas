@@ -9,8 +9,6 @@ let toDictionary (inputText: string) =
             let sHead : string = head
             match sHead.Split '=' with
             | [|""; _|] -> raise <| new ArgumentException()
-            | [||] -> toDict(tail)
-            | [|a|] -> (a, "")::toDict(tail)
             | [|a; b|] -> (a, b)::toDict(tail)
             | [|a; ""; b|] -> (a, $"={b}")::toDict(tail)
             | _ -> []
