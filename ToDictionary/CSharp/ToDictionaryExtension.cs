@@ -2,43 +2,57 @@ namespace Kata.ToDictionary;
 
 public static class ToDictionaryExtension
 {
-    public static IEnumerable<(string, string)> ToDictionary(this string input)
+    public static Dictionary<string, string> ToDictionary(this string input)
     {
-        var listSplit = input.Split(';', StringSplitOptions.RemoveEmptyEntries);
-        if (!listSplit.Any()) return Array.Empty<(string, string)>();
+        var listSplit = input.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (!listSplit.Any()) return new Dictionary<string, string>();
         var innerSplit = listSplit
-            .Select(i => i.Split('=', 2))
-            .SelectMany(inner =>
+            .Select(i => i.Split('=', 2, StringSplitOptions.TrimEntries))
+            .GroupBy(kvp => kvp.First())
+            .SelectMany(group =>
                 {
-                    if (inner[0] == "")
+                    var kvp = group.Last();
+                    if (kvp[0] == "")
                         throw new ArgumentException();
 
-                    return !inner.Any()
-                        ? Array.Empty<(string, string)>()
-                        : new[] { (inner.First(), inner.Last()) };
+                    return new[] { ( kvp.First(), kvp.Last().Replace(" ", ""))};
                 }
             );
-        return innerSplit.ToList();
+        return innerSplit.ToDictionary(k => k.Item1, v => v.Item2);
     }
 
-    public static IEnumerable<(string, string)> ToDictionaryRecursive(this string input) =>
-        ToDict( input.Split(';', StringSplitOptions.RemoveEmptyEntries));
+    public static IDictionary<string, string> ToDictionaryRecursive(this string input)
+    {
+        return ToDict(input.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Reverse()
+            .ToDictionary(k => k.key, v => v.value);
+    }
 
-    private static IEnumerable<(string, string)> ToDict(IEnumerable<string> list)
+    private static IEnumerable<(string key, string value)> ToDict(IEnumerable<string> list)
     {
         var value = list as string[] ?? list.ToArray();
         if (!value.Any()) return Enumerable.Empty<(string, string)>();
-        var head = value.FirstOrDefault();
-        var tail = value.Skip(1);
-        return head!.Split('=') switch
-        {
-            { Length: 2 } l => string.IsNullOrWhiteSpace(l[0])
-                ? throw new ArgumentException()
-                : new[] { (l.First(), l.Last()) }.Concat(ToDict(tail)),
 
-            { Length: 3 } l => new[] { (l.First(), $"={l.Last()}") }.Concat(ToDict(tail)),
+        var head = value.First();
+        var tail = value.Skip(1);
+
+        return head.Split('=', StringSplitOptions.TrimEntries) switch
+        {
+            { Length: 2 } arr => string.IsNullOrWhiteSpace(arr[0])
+                ? throw new ArgumentException()
+                : ToDict(tail).Union(new[] { (arr.First(), arr.Last()) }, new CompareKeyValuePair()),
+
+            { Length: 3 } arr => ToDict(tail)
+                .Union(new[] { (arr.First(), $"={arr.Last()}") }, new CompareKeyValuePair()),
 
             _ => Enumerable.Empty<(string, string)>()
         };
+    }
+
+    internal record CompareKeyValuePair : IEqualityComparer<(string, string)>
+    {
+        public bool Equals((string, string) x, (string, string) y) => x.Item1 == y.Item1;
+
+        public int GetHashCode((string, string) obj) => HashCode.Combine(obj.Item1);
     }
 }

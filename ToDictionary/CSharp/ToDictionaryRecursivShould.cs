@@ -6,21 +6,24 @@ public class ToDictionaryRecursiveShould
 {
     public static IEnumerable<object[]> InputDataSet()
     {
-        yield return new object[] { "a=1;b=2;c=3", new []{("a", "1"), ("b", "2"), ("c", "3") } };
-        yield return new object[] { "a=1;b=2", new []{("a", "1"), ("b", "2")} };
-        yield return new object[] { "a=1;;b=2", new []{("a", "1"), ("b", "2")} };
-        yield return new object[] { "a=", new []{("a", "")} };
-        yield return new object[] { "a==1", new []{("a", "=1")} };
+        yield return new object[] { "a=1;b=2;c=3", new[] { ("a", "1"), ("b", "2"), ("c", "3") } };
+        yield return new object[] { "a=1;a=2", new[] { ("a", "2") } };
+        yield return new object[] { "a=1;;b=2", new[] { ("a", "1"), ("b", "2") } };
+        yield return new object[] { "a=", new[] { ("a", "") } };
+        yield return new object[] { "a==1", new[] { ("a", "=1") } };
+        yield return new object[] { "a = 1;;c = ;;b = = 2", new[] { ("a", "1"), ("c", ""), ("b", "=2") } };
     }
 
     [Theory]
     [MemberData(nameof(InputDataSet))]
     public void AnotherSplitBySemicolonAndEqualSymbol(string input, IEnumerable<(string, string)> expected)
     {
+        //arrange
+        var expectedDict = expected.ToDictionary(k => k.Item1, v => v.Item2);
         //act
         var result = input.ToDictionaryRecursive();
         //assert
-        Assert.Equal(expected, result);
+        Assert.Equal(expectedDict, result);
     }
 
     [Fact]
@@ -31,7 +34,7 @@ public class ToDictionaryRecursiveShould
         //act
         var result = input.ToDictionaryRecursive();
         //assert
-        Assert.Equal(Enumerable.Empty<(string, string)>(), result);
+        Assert.Equal(new Dictionary<string, string>(), result);
     }
 
     [Fact]

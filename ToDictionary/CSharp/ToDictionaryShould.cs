@@ -6,16 +6,17 @@ public class ToDictionaryShould
 {
     public static IEnumerable<object[]> InputDataSet()
     {
-        yield return new object[] { "a=1;b=2;c=3", new []{("a", "1"), ("b", "2"), ("c", "3") } };
-        yield return new object[] { "a=1;b=2", new []{("a", "1"), ("b", "2")} };
-        yield return new object[] { "a=1;;b=2", new []{("a", "1"), ("b", "2")} };
-        yield return new object[] { "a=", new []{("a", "")} };
-        yield return new object[] { "a==1", new []{("a", "=1")} };
+        yield return new object[] { "a=1;b=2;c=3", new Dictionary<string, string> { ["a"] = "1", ["b"] = "2", ["c"] = "3" } };
+        yield return new object[] { "a=1;a=2", new Dictionary<string, string> { ["a"] = "2" } };
+        yield return new object[] { "a=1;;b=2", new Dictionary<string, string> { ["a"] = "1", ["b"] = "2" } };
+        yield return new object[] { "a=", new Dictionary<string, string> { ["a"] = "" } };
+        yield return new object[] { "a==1", new Dictionary<string, string> { ["a"] = "=1" } };
+        yield return new object[] { "a = 1;;c = ;;b = = 2", new Dictionary<string, string> { ["a"] = "1", ["c"] = "", ["b"] = "=2" } };//end game
     }
 
     [Theory]
     [MemberData(nameof(InputDataSet))]
-    public void SplitBySemicolonAndEqualSymbol(string input, IEnumerable<(string, string)> expected)
+    public void SplitBySemicolonAndEqualSymbol(string input, Dictionary<string, string> expected)
     {
         //act
         var result = input.ToDictionary();
@@ -31,7 +32,7 @@ public class ToDictionaryShould
         //act
         var result = input.ToDictionary();
         //assert
-        Assert.Equal(Enumerable.Empty<(string, string)>(), result);
+        Assert.Equal(new Dictionary<string, string>(), result);
     }
 
     [Fact]
