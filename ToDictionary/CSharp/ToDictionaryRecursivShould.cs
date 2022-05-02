@@ -21,7 +21,7 @@ public class ToDictionaryRecursiveShould
         //arrange
         var expectedDict = expected.ToDictionary(k => k.Item1, v => v.Item2);
         //act
-        var result = input.ToDictionaryRecursive();
+        var result = StringParse.ToDictionary(input);
         //assert
         Assert.Equal(expectedDict, result);
     }
@@ -32,7 +32,7 @@ public class ToDictionaryRecursiveShould
         //arrange
         var input = "";
         //act
-        var result = input.ToDictionaryRecursive();
+        var result = StringParse.ToDictionary(input);
         //assert
         Assert.Equal(new Dictionary<string, string>(), result);
     }
@@ -43,7 +43,7 @@ public class ToDictionaryRecursiveShould
         //arrange
         var input = "=1";
         //act
-        var act = () => input.ToDictionaryRecursive();
+        var act = () => StringParse.ToDictionary(input);
         //assert
         Assert.Throws<ArgumentException>(act);
     }

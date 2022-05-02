@@ -19,7 +19,7 @@ public class ToDictionaryShould
     public void SplitBySemicolonAndEqualSymbol(string input, Dictionary<string, string> expected)
     {
         //act
-        var result = input.ToDictionary();
+        var result = ToDictionaryExtension.ToDictionary(input);
         //assert
         Assert.Equal(expected, result);
     }
@@ -30,7 +30,7 @@ public class ToDictionaryShould
         //arrange
         var input = "";
         //act
-        var result = input.ToDictionary();
+        var result = ToDictionaryExtension.ToDictionary(input);
         //assert
         Assert.Equal(new Dictionary<string, string>(), result);
     }
@@ -41,7 +41,7 @@ public class ToDictionaryShould
         //arrange
         var input = "=1";
         //act
-        var act = () => input.ToDictionary();
+        var act = () => ToDictionaryExtension.ToDictionary(input);
         //assert
         Assert.Throws<ArgumentException>(act);
     }
